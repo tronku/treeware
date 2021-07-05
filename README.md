@@ -2,7 +2,7 @@
 
 Generates a categorized changelog and releases your prod or beta with assets. It uses a drafter file to categorize data into labels.
 
-## Params required
+## List of params
 ```yaml
 inputs:
   drafter_path: 
@@ -61,7 +61,7 @@ inputs:
     required: false
 ```
 
-## Outputs generated
+## List of outputs
 ```yaml
 outputs:
   changelogs:
@@ -76,6 +76,7 @@ outputs:
 
 ## Format of drafter.yml
 You can add any title or labels for the changelogs. Your drafter must follow the same format though.
+Here's the default drafter:
 ```yaml
 categories:
   - title: '🚀 **Features** '
@@ -84,15 +85,44 @@ categories:
       - 'enhancement'
   - title: '🐛 **Bug Fixes** '
     labels:
-      - 'Bug'
       - 'fix'
+      - 'bugfix'
+      - 'bug'
+  - title: '🧰 **Maintenance** '
+    labels:
+      - 'chore'
 ```
 
-## How to use
+## How to use treeware?
+- To get the changelogs only (on default branch and drafter)
 ```yaml
 - name: Changelogs
   uses: tronku/treeware@master
+```
+
+- To create a release on GitHub with assets and notes
+```yaml
+- name: Release
+  uses: tronku/treeware@master
   with:
     prod_branch: development
+    should_release: true
     drafter_path: drafter.yml
+    assets: path_of_asset1, path_of_asset2
+    extra_release_note: your_extra_note
+    version_name: your_release_version
+```
+
+- To create a beta release
+```yaml
+- name: Release
+  uses: tronku/treeware@master
+  with:
+    beta_branch: development
+    is_beta: true
+    should_release: true
+    drafter_path: drafter.yml
+    assets: path_of_asset1, path_of_asset2
+    extra_release_note: your_extra_note
+    version_name: your_release_version
 ```
