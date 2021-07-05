@@ -6,18 +6,15 @@ branding:
   color: 'blue'
 
 inputs:
-  token:
-    description: 'GitHub token to access your repo'
-    required: true
+  drafter_path: 
+    description: 'Path to the drafter file'
+    required: false
+    default: drafter.yml
 
   prod_branch:
     description: 'Production branch of the repo'
-    required: true
-    default: 'development'
-    
-  drafter_path: 
-    description: 'Path to the drafter file'
-    required: true
+    required: false
+    default: ''
 
   should_release:
     description: 'Should release a new version?'
@@ -27,6 +24,7 @@ inputs:
   version_name:
     description: 'Version name of the upcoming release'
     required: false
+    default: ''
 
   is_beta:
     description: 'Is this a beta release?'
@@ -36,6 +34,7 @@ inputs:
   beta_branch:
     description: 'Beta branch of the repo for release'
     required: false
+    default: ''
 
   assets:
     description: 'Path to the assets, separated by comma'
@@ -47,7 +46,7 @@ inputs:
     default: ''
     required: false
 
-  prerelease:
+  is_prerelease:
     description: 'Is this a prerelease?'
     default: 'false'
     required: false
@@ -72,20 +71,18 @@ outputs:
   release_url:
     description: 'The URL to the GitHub release'  
 
-
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.token }}
     - ${{ inputs.prod_branch }}
     - ${{ inputs.drafter_path }}
     - ${{ inputs.should_release }}
     - ${{ inputs.is_beta }}
+    - ${{ inputs.beta_branch }}
     - ${{ inputs.version_name }}
     - ${{ inputs.assets }}
-    - ${{ inputs.beta_branch }}
     - ${{ inputs.target_commitish }} 
-    - ${{ inputs.prerelease }}
+    - ${{ inputs.is_prerelease }}
     - ${{ inputs.is_draft }}
     - ${{ inputs.extra_release_note }}

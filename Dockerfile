@@ -6,6 +6,7 @@ COPY get_releases.py /get_releases.py
 COPY get_pull_requests.py /get_pull_requests.py
 COPY extract_changelogs.py /extract_changelogs.py
 COPY release.sh /release.sh
+COPY drafter.yml /drafter.yml
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 RUN apk add --no-cache \
