@@ -39,7 +39,7 @@ fi
 # Adding assets, if present
 if [ ${#assets} != 0 ] ; then
   assets_path=""
-  assets_arr=$(echo "$assets" | awk '{split($0,asset_data,","); print asset_data[1]}')
+  assets_arr=($(echo "$assets" | tr -d " " | tr "," "\n"))
   for asset in "${assets_arr[@]}"
   do
     assets_path="$assets_path -a \"$asset\""

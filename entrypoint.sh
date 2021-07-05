@@ -6,13 +6,13 @@ token=$1
 prod_branch=$2
 drafter_path=$3
 should_release=$4
-has_beta=$5
+is_beta=$5
 
 branch=$prod_branch
-if [ "$has_beta" = true ] ; then
+if [ "$is_beta" = true ] ; then
   branch=$8
 fi
-changelogs=`python3 /treeware_main.py $token $GITHUB_REPOSITORY $branch $has_beta $drafter_path`
+changelogs=`python3 /treeware_main.py "$token" "$GITHUB_REPOSITORY" "$branch" "$is_beta" "$drafter_path"`
 echo "$changelogs"
 
 if [[ $changelogs == Error* ]] ; then

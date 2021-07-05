@@ -27,8 +27,8 @@ inputs:
     description: 'Version name of the upcoming release'
     required: false
 
-  has_beta:
-    description: 'Do you have a beta release to handle?'
+  is_beta:
+    description: 'Is this a beta release?'
     required: false
     default: 'false'
 
@@ -73,6 +73,7 @@ outputs:
 ```
 
 ## Format of drafter.yml
+You can add any title or labels for the changelogs. Your drafter must follow the same format though.
 ```yaml
 categories:
   - title: '🚀 **Features** '

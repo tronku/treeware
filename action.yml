@@ -28,8 +28,8 @@ inputs:
     description: 'Version name of the upcoming release'
     required: false
 
-  has_beta:
-    description: 'Do you have a beta release to handle?'
+  is_beta:
+    description: 'Is this a beta release?'
     required: false
     default: 'false'
 
@@ -81,7 +81,7 @@ runs:
     - ${{ inputs.prod_branch }}
     - ${{ inputs.drafter_path }}
     - ${{ inputs.should_release }}
-    - ${{ inputs.has_beta }}
+    - ${{ inputs.is_beta }}
     - ${{ inputs.version_name }}
     - ${{ inputs.assets }}
     - ${{ inputs.beta_branch }}
