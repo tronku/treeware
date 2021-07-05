@@ -5,10 +5,6 @@ Generates a categorized changelog and releases your prod or beta. It uses a draf
 ## Params required
 ```yaml
 inputs:
-  token:
-    description: 'GitHub token to access your repo'
-    required: true
-
   prod_branch:
     description: 'Production branch of the repo'
     required: true
@@ -45,7 +41,7 @@ inputs:
     description: 'Specifies the commitish value that determines where the Git tag is created from. Can be any branch or commit SHA.'
     default: default branch of the repo
 
-  prerelease:
+  is_prerelease:
     description: 'Is this a prerelease?'
     default: false
   
@@ -91,7 +87,6 @@ categories:
 - name: Changelogs
   uses: tronku/treeware@master
   with:
-    token: ${{ env.GITHUB_TOKEN }}
     prod_branch: development
     drafter_path: drafter.yml
 ```
