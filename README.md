@@ -1,18 +1,19 @@
 # treeware
 
-Generates a categorized changelog and releases your prod or beta. It uses a drafter file to categorize data into labels.
+Generates a categorized changelog and releases your prod or beta with assets. It uses a drafter file to categorize data into labels.
 
 ## Params required
 ```yaml
 inputs:
-  prod_branch:
-    description: 'Production branch of the repo'
-    required: true
-    default: 'development'
-    
   drafter_path: 
     description: 'Path to the drafter file'
     required: true
+    default: drafter.yml
+
+  prod_branch:
+    description: 'Production branch of the repo'
+    required: false
+    default: default branch of the repo
 
   should_release:
     description: 'Should release a new version?'
@@ -22,6 +23,7 @@ inputs:
   version_name:
     description: 'Version name of the upcoming release'
     required: false
+    default: ''
 
   is_beta:
     description: 'Is this a beta release?'
@@ -31,6 +33,7 @@ inputs:
   beta_branch:
     description: 'Beta branch of the repo for release'
     required: false
+    default: ''
 
   assets:
     description: 'Path to the assets, separated by comma'
@@ -39,16 +42,19 @@ inputs:
 
   target_commitish:
     description: 'Specifies the commitish value that determines where the Git tag is created from. Can be any branch or commit SHA.'
-    default: default branch of the repo
+    default: ''
+    required: false
 
   is_prerelease:
     description: 'Is this a prerelease?'
-    default: false
+    default: 'false'
+    required: false
   
   is_draft:
     description: 'Is this just a draft of the release?'
-    default: false
-
+    default: 'false'
+    required: false
+  
   extra_release_note:
     description: 'Extra note to add in the GitHub release notes'
     default: ''
