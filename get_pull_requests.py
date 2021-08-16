@@ -77,9 +77,9 @@ query($owner: String!, $repoName: String!, $timestamp: GitTimestamp!, $ref: Stri
 
 BASE_URL = "https://api.github.com/graphql"
 prNumbers = set()
-prList = list()
 
 def getPullRequests(token, repoName, timestamp, branch, paging = False, after = ""):
+    prList = list()
     repoInfo = repoName.split('/')
     inputVariables = {
         "owner": repoInfo[0],
@@ -102,27 +102,33 @@ def getPullRequests(token, repoName, timestamp, branch, paging = False, after = 
             headers = headers)
 
         if versionRequest.status_code == 200:
-            return parseResponse(versionRequest.json(), token, repoName, timestamp, branch)
+            response = versionRequest.json()
+            prList += createList(response)
+            prList += checkForNextPR(response, token, repoName, timestamp, branch)
+            return prList
         else:
             raise Exception("Query failed " + versionRequest.status_code)
     except (requests.exceptions.RequestException, requests.exceptions.HTTPError) as err:
         raise Exception("Network Exception " + err.response.text)
 
+def createList(response):
+  prList = list()
+  history = response['data']['repository']['ref']['target']['history']
+  for commit in history['nodes']:
+    for pr in commit['associatedPullRequests']['nodes']:
+      if (pr['number'] not in prNumbers):
+        labels = getLabels(pr['labels']['nodes'])
+        prList.append("- {0} @{1} (#{2}) {3}".format(pr['title'], pr['author']['login'], pr['number'], labels))
+        prNumbers.add(pr['number'])
+  return prList
 
-def parseResponse(response, token, repoName, timestamp, branch):
-    history = response['data']['repository']['ref']['target']['history']
-    for commit in history['nodes']:
-        for pr in commit['associatedPullRequests']['nodes']:
-            if (pr['number'] not in prNumbers):
-                labels = getLabels(pr['labels']['nodes'])
-                prList.append("- {0} @{1} (#{2}) {3}".format(pr['title'], pr['author']['login'], pr['number'], labels))
-                prNumbers.add(pr['number'])
-
-    if history['pageInfo']['hasNextPage'] == True:
-        nextCursor = history['pageInfo']['endCursor']
-        getPullRequests(token, repoName, timestamp, branch, True, nextCursor)
-    else:
-        return prList
+def checkForNextPR(response, token, repoName, timestamp, branch):
+  history = response['data']['repository']['ref']['target']['history']
+  if history['pageInfo']['hasNextPage'] == True:
+      nextCursor = history['pageInfo']['endCursor']
+      return getPullRequests(token, repoName, timestamp, branch, True, nextCursor)
+  else:
+      return list()
 
 def getLabels(labels):
     labelString = "|||"
