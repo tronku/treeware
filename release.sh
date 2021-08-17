@@ -8,8 +8,13 @@ target_commitish=$5
 prerelease=$6
 is_draft=$7
 extra_release_note=$8
+is_beta=$9
 
-command="hub release create --message \"Release $version_name\" --message \"$changelogs\""
+if [ "$is_beta" = true ] ; then
+  command="hub release create --message \"Beta $version_name\" --message \"$changelogs\""
+else
+  command="hub release create --message \"Release $version_name\" --message \"$changelogs\""
+fi
 
 # Adding extra note
 if [ ${#extra_release_note} != 0 ]; then
