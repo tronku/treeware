@@ -43,6 +43,6 @@ else
   echo "::set-output name=changelogs::$content"
 
   if [ "$should_release" = true ] ; then
-    bash /release.sh "$token" "$version_name" "$changelogs" "$assets" "$target_commitish" "$is_prerelease" "$is_draft" "$extra_release_note"
+    bash /release.sh "$token" "$version_name" "$changelogs" "$assets" "$target_commitish" "$is_prerelease" "$is_draft" "$extra_release_note" "$is_beta"
   fi
 fi
