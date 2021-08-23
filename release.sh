@@ -21,16 +21,6 @@ if [ ${#extra_release_note} != 0 ]; then
   command="$command --message \"> $extra_release_note\""
 fi
 
-echo "target - $target_commitish"
-# Creating a release on default branch with tag and body
-if [ ${#target_commitish} = 0 ] ; then
-  target_commitish=$(curl -L -H "Authorization: Bearer $token" \
-            https://api.github.com/repos/$GITHUB_REPOSITORY \
-            | jq .default_branch)
-  
-fi
-command="$command -t $target_commitish"
-
 # if it's a draft
 if [ "$is_draft" = true ] ; then
   command="$command -d"
@@ -50,6 +40,21 @@ if [ ${#assets} != 0 ] ; then
     assets_path="$assets_path -a \"$asset\""
   done
   command="$command $assets_path"
+fi
+
+git fetch
+
+if [ $(git tag -l "$version_name") ]; then
+    echo "Tag already created."
+else
+    if [ ${#target_commitish} = 0 ] ; then
+      git config user.name ${GITHUB_ACTOR}
+      git config user.email ${GITHUB_ACTOR}@gmail.com
+      git tag -a $version_name -m ""
+      git push origin --tags
+    else
+      command="$command -t $target_commitish"
+    fi
 fi
 
 echo "$command"
