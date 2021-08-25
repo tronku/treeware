@@ -118,7 +118,7 @@ def createList(response):
     for pr in commit['associatedPullRequests']['nodes']:
       if (pr['number'] not in prNumbers):
         labels = getLabels(pr['labels']['nodes'])
-        prList.append("- {0} @{1} (#{2}) {3}".format(pr['title'], pr['author']['login'], pr['number'], labels))
+        prList.append("- {0} @{1} [#{2}]({3}) {4}".format(pr['title'], pr['author']['login'], pr['number'], pr['url'], labels))
         prNumbers.add(pr['number'])
   return prList
 
