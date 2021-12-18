@@ -48,3 +48,4 @@ def parseResponse(response, isBeta):
             return node["createdAt"]
         elif (tag.count('.') == 2):
             return node["createdAt"]
+    return None
