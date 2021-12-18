@@ -6,7 +6,9 @@ query($owner: String!, $repoName: String!) {
         releases(first: 10, orderBy: {field: CREATED_AT, direction: DESC}) {
             nodes {
                 createdAt
-                name
+                tag {
+                    name
+                }
             }
         }
     }
@@ -41,8 +43,9 @@ def getLastRelease(token, repoName, isBeta = False):
 def parseResponse(response, isBeta):
     nodes = response["data"]["repository"]["releases"]["nodes"]
     for node in nodes:
-        releaseData = node["name"].split(' ')
+        tag = node["tag"]["name"]
         if (isBeta == True):
             return node["createdAt"]
-        elif (releaseData[0] == 'Release'):
+        elif (tag.count('.') == 2):
             return node["createdAt"]
+    return None

@@ -39,12 +39,49 @@ query($owner: String!, $repoName: String!, $timestamp: GitTimestamp!, $ref: Stri
 """
 
 prQueryWithPagination = """
-query($owner: String!, $repoName: String!, $timestamp: GitTimestamp!, $ref: String!, $after: String!) {
+query($owner: String!, $repoName: String!, $ref: String!, $after: String!) {
     repository(name: $repoName, owner: $owner) {
         ref(qualifiedName: $ref) {
             target {
               ... on Commit {
-                history(first: 50, since: $timestamp, after: $after) {
+                history(first: 50, after: $after) {
+                  totalCount
+                  pageInfo {
+                    hasNextPage
+                    endCursor
+                  }  
+                  nodes {
+                    associatedPullRequests(first: 5) {
+                      nodes {
+                        title
+                        number
+                        url
+                        author {
+                          login
+                        }
+                        labels(first: 10) {
+                          nodes {
+                            name
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+        }
+    }
+}
+"""
+
+prQueryForFirstRelease = """
+query($owner: String!, $repoName: String!, $ref: String!) {
+    repository(name: $repoName, owner: $owner) {
+        ref(qualifiedName: $ref) {
+            target {
+              ... on Commit {
+                history(first: 50) {
                   totalCount
                   pageInfo {
                     hasNextPage
@@ -78,21 +115,24 @@ query($owner: String!, $repoName: String!, $timestamp: GitTimestamp!, $ref: Stri
 BASE_URL = "https://api.github.com/graphql"
 prNumbers = set()
 
-def getPullRequests(token, repoName, timestamp, branch, paging = False, after = ""):
+def getPullRequests(token, repoName, branch, timestamp = None, paging = False, after = ""):
     prList = list()
     repoInfo = repoName.split('/')
     inputVariables = {
         "owner": repoInfo[0],
         "repoName": repoInfo[1],
-        "timestamp": timestamp,
         "ref": branch
     }
-    
-    if (paging == True):
+
+    if timestamp != None:
+      inputVariables["timestamp"] = timestamp
+      query = prQuery
+    else:
+      if not paging:
+        query = prQueryForFirstRelease
+      else:
         query = prQueryWithPagination
         inputVariables["after"] = after
-    else:
-        query = prQuery
 
     try:
         headers = {"Authorization": "token " + token}
@@ -104,7 +144,7 @@ def getPullRequests(token, repoName, timestamp, branch, paging = False, after = 
         if versionRequest.status_code == 200:
             response = versionRequest.json()
             prList += createList(response)
-            prList += checkForNextPR(response, token, repoName, timestamp, branch)
+            prList += checkForNextPR(response, token, repoName, branch)
             return prList
         else:
             raise Exception("Query failed " + versionRequest.status_code)
@@ -122,11 +162,11 @@ def createList(response):
         prNumbers.add(pr['number'])
   return prList
 
-def checkForNextPR(response, token, repoName, timestamp, branch):
+def checkForNextPR(response, token, repoName, branch):
   history = response['data']['repository']['ref']['target']['history']
   if history['pageInfo']['hasNextPage'] == True:
       nextCursor = history['pageInfo']['endCursor']
-      return getPullRequests(token, repoName, timestamp, branch, True, nextCursor)
+      return getPullRequests(token, repoName, branch, paging=True, after=nextCursor)
   else:
       return list()
 

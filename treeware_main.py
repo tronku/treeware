@@ -6,7 +6,7 @@ from extract_changelogs import beautifyChangelogs
 def init(token, repoName, branch, isBeta, drafterPath):
     try:
         lastReleaseTimestamp = getLastRelease(token, repoName, isBeta)
-        prList = getPullRequests(token, repoName, lastReleaseTimestamp, branch)
+        prList = getPullRequests(token, repoName, branch, lastReleaseTimestamp)
         changelogs = beautifyChangelogs(prList, drafterPath)
         print(changelogs)
     except Exception as err:
