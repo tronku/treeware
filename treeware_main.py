@@ -5,6 +5,7 @@ from extract_changelogs import beautifyChangelogs
 
 def init(token, repoName, branch, isBeta, drafterPath):
     try:
+        sys.setrecursionlimit(2000)
         lastReleaseTimestamp = getLastRelease(token, repoName, isBeta)
         prList = getPullRequests(token, repoName, branch, lastReleaseTimestamp)
         changelogs = beautifyChangelogs(prList, drafterPath)
