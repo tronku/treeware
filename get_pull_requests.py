@@ -1,4 +1,5 @@
 import requests
+import sys
 from extract_changelogs import beautifyChangelogs
 
 prQuery = """
@@ -39,12 +40,12 @@ query($owner: String!, $repoName: String!, $timestamp: GitTimestamp!, $ref: Stri
 """
 
 prQueryWithPagination = """
-query($owner: String!, $repoName: String!, $ref: String!, $after: String!) {
+query($owner: String!, $repoName: String!, $timestamp: GitTimestamp!, $ref: String!, $after: String!) {
     repository(name: $repoName, owner: $owner) {
         ref(qualifiedName: $ref) {
             target {
               ... on Commit {
-                history(first: 100, after: $after) {
+                history(first: 100, since: $timestamp, after: $after) {
                   totalCount
                   pageInfo {
                     hasNextPage
@@ -112,6 +113,43 @@ query($owner: String!, $repoName: String!, $ref: String!) {
 }
 """
 
+prQueryWithPaginationForFirstRelease = """
+query($owner: String!, $repoName: String!, $ref: String!, $after: String!) {
+    repository(name: $repoName, owner: $owner) {
+        ref(qualifiedName: $ref) {
+            target {
+              ... on Commit {
+                history(first: 100, after: $after) {
+                  totalCount
+                  pageInfo {
+                    hasNextPage
+                    endCursor
+                  }  
+                  nodes {
+                    associatedPullRequests(first: 5) {
+                      nodes {
+                        title
+                        number
+                        url
+                        author {
+                          login
+                        }
+                        labels(first: 10) {
+                          nodes {
+                            name
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+        }
+    }
+}
+"""
+
 BASE_URL = "https://api.github.com/graphql"
 prNumbers = set()
 
@@ -126,12 +164,17 @@ def getPullRequests(token, repoName, branch, timestamp = None, paging = False, a
 
     if timestamp != None:
       inputVariables["timestamp"] = timestamp
-      query = prQuery
+      if not paging:
+        query = prQuery
+      else:
+        query = prQueryWithPagination
+        inputVariables["after"] = after
     else:
+      # for the first time releases
       if not paging:
         query = prQueryForFirstRelease
       else:
-        query = prQueryWithPagination
+        query = prQueryWithPaginationForFirstRelease
         inputVariables["after"] = after
 
     try:
@@ -144,7 +187,7 @@ def getPullRequests(token, repoName, branch, timestamp = None, paging = False, a
         if versionRequest.status_code == 200:
             response = versionRequest.json()
             prList += createList(response)
-            prList += checkForNextPR(response, token, repoName, branch)
+            prList += checkForNextPR(response, token, repoName, branch, timestamp)
             return prList
         else:
             raise Exception("Query failed " + versionRequest.status_code)
@@ -162,11 +205,11 @@ def createList(response):
         prNumbers.add(pr['number'])
   return prList
 
-def checkForNextPR(response, token, repoName, branch):
+def checkForNextPR(response, token, repoName, branch, timestamp):
   history = response['data']['repository']['ref']['target']['history']
   if history['pageInfo']['hasNextPage'] == True:
       nextCursor = history['pageInfo']['endCursor']
-      return getPullRequests(token, repoName, branch, paging=True, after=nextCursor)
+      return getPullRequests(token, repoName, branch, timestamp, paging=True, after=nextCursor)
   else:
       return list()
 
@@ -175,3 +218,11 @@ def getLabels(labels):
     for label in labels:
         labelString += label['name'] + "|||"
     return labelString
+
+if __name__ == '__main__':
+    token = sys.argv[1]
+    repo = sys.argv[2]
+    branch = sys.argv[3]
+    timestamp = sys.argv[4]
+    
+    getPullRequests(token, repo, branch, timestamp)
