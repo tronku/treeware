@@ -1,4 +1,5 @@
 import requests
+import sys
 
 releaseQuery = """
 query($owner: String!, $repoName: String!) {
@@ -49,3 +50,13 @@ def parseResponse(response, isBeta):
         elif (tag.count('.') == 2):
             return node["createdAt"]
     return None
+
+if __name__ == '__main__':
+    token = sys.argv[1]
+    repo = sys.argv[2]
+    if (sys.argv[3] == 'true'):
+        isBeta = True
+    else:
+        isBeta = False
+    
+    getLastRelease(token, repo, isBeta)
