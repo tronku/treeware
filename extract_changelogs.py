@@ -15,7 +15,7 @@ def beautifyChangelogs(prList, drafterPath):
             return mergeCategories(refinedPRs)
 
         except yaml.YAMLError as exception:
-            raise Exception("Drafter file in not valid. Please fix and try again.")
+            raise Exception("Drafter file is not valid. Please fix and try again.")
 
 def categorization(prList, labelMap):
     newPrDict = dict()
