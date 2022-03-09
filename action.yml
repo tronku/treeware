@@ -61,10 +61,35 @@ inputs:
     default: ''
     required: false
 
+  slack_workspace_id:
+    description: 'Slack workspace ID for communication'
+    default: ''
+    required: false
+
+  slack_channel_id:
+    description: 'Slack channel ID for communication'
+    default: ''
+    required: false
+
+  slack_webhook_id:
+    description: 'Slack webhook ID for communication'
+    default: ''
+    required: false
+
+  slack_message_type:
+    description: 'Slack message type for communication (release, list, normal)'
+    default: 'normal'
+    required: false
+
+  title_observer_section:
+    description: 'Section that needs to be used for title in changelogs, by default it uses PR title'
+    default: ''
+    required: false
+
 outputs:
   changelogs:
     description: 'Categorized changelogs based on labels'
-  
+
   upload_url:
     description: 'The assets upload URL to the GitHub release'
 
@@ -86,3 +111,7 @@ runs:
     - ${{ inputs.is_prerelease }}
     - ${{ inputs.is_draft }}
     - ${{ inputs.extra_release_note }}
+    - ${{ inputs.slack_workspace_id }}
+    - ${{ inputs.slack_channel_id }}
+    - ${{ inputs.slack_webhook_id }}
+    - ${{ inputs.title_observer_section }}
