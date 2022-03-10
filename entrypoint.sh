@@ -53,6 +53,7 @@ else
 
     # communicate the changelog to the specified slack webhook
     if [ ${#slack_workspace_id} = 0 && ${#slack_channel_id} = 0 && ${#slack_webhook_id} = 0 ]; then
+      echo "$slack_workspace_id $slack_channel_id" "$slack_webhook_id"
       bash /slack_communicator.sh "$slack_workspace_id" "$slack_channel_id" "$slack_webhook_id" "$version_name" "$title_observer_section"
     fi
   fi
