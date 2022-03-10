@@ -44,5 +44,14 @@ else
 
   if [ "$should_release" = true ] ; then
     bash /release.sh "$token" "$version_name" "$changelogs" "$assets" "$target_commitish" "$is_prerelease" "$is_draft" "$extra_release_note" "$is_beta"
+<<<<<<< Updated upstream
+=======
+
+    # communicate the changelog to the specified slack webhook
+    if [ ${#slack_workspace_id} = 0 && ${#slack_channel_id} = 0 && ${#slack_webhook_id} = 0 ]; then
+      bash /slack_communicator.sh "$slack_workspace_id" "$slack_channel_id" "$slack_webhook_id" "$version_name" "$title_observer_section"
+    fi
+
+>>>>>>> Stashed changes
   fi
 fi

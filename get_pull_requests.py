@@ -194,6 +194,7 @@ def getPullRequests(token, repoName, branch, timestamp = None, paging = False, a
     except (requests.exceptions.RequestException, requests.exceptions.HTTPError) as err:
         raise Exception("Network Exception " + err.response.text)
 
+<<<<<<< Updated upstream
 def createList(response):
   prList = list()
   history = response['data']['repository']['ref']['target']['history']
@@ -204,6 +205,50 @@ def createList(response):
         prList.append("- {0} @{1} [(#{2})]({3}) {4}".format(pr['title'], pr['author']['login'], pr['number'], pr['url'], labels).replace('"', "'"))
         prNumbers.add(pr['number'])
   return prList
+=======
+
+def createList(response, titleSection):
+    prList = list()
+    history = response['data']['repository']['ref']['target']['history']
+    for commit in history['nodes']:
+        for pr in commit['associatedPullRequests']['nodes']:
+            if pr['number'] not in prNumbers:
+                labels = getLabels(pr['labels']['nodes'])
+                prList.append("- {0} {1} [(#{2})]({3}) {4}".format(getTitle(pr, titleSection), getUserName(pr), pr['number'], pr['url'], labels).replace('"', "'"))
+                prNumbers.add(pr['number'])
+    return prList
+
+def getUserName(prData):
+    try:
+      return "- {0} @{1}".format(prData['author']['name'], prData['author']['login'])
+    except Exception as err:
+      return "@" + prData['author']['login']
+
+def getTitle(prData, titleSection):
+    if len(titleSection.strip()) == 0:
+        return prData['title']
+    else:
+        return getPullRequestSection(prData, titleSection)
+
+
+def getPullRequestSection(prData, titleSection):
+    body = prData['body']
+    titleData = ''
+    foundGivenSection = False
+    for line in body.split('\n'):
+        if len(line.strip()) == 0:
+            continue
+        if titleSection in line:
+            foundGivenSection = True
+        elif foundGivenSection and not line.startswith("#"):
+            titleData = line.strip().replace('- ', '', 1)
+            break
+
+    if len(titleData) == 0:
+        titleData = prData['title']
+    return titleData
+
+>>>>>>> Stashed changes
 
 def checkForNextPR(response, token, repoName, branch, timestamp):
   history = response['data']['repository']['ref']['target']['history']
