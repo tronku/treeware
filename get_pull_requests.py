@@ -21,6 +21,7 @@ query($owner: String!, $repoName: String!, $timestamp: GitTimestamp!, $ref: Stri
                         url
                         body
                         author {
+                          login
                           ... on User {
                             name
                           }
@@ -61,6 +62,7 @@ query($owner: String!, $repoName: String!, $timestamp: GitTimestamp!, $ref: Stri
                         url
                         body
                         author {
+                          login
                           ... on User {
                             name
                           }
@@ -101,6 +103,7 @@ query($owner: String!, $repoName: String!, $ref: String!) {
                         url
                         body
                         author {
+                          login
                           ... on User {
                             name
                           }
@@ -141,6 +144,7 @@ query($owner: String!, $repoName: String!, $ref: String!, $after: String!) {
                         url
                         body
                         author {
+                          login
                           ... on User {
                             name
                           }
@@ -219,15 +223,18 @@ def createList(response, titleSection):
         for pr in commit['associatedPullRequests']['nodes']:
             if pr['number'] not in prNumbers:
                 labels = getLabels(pr['labels']['nodes'])
-                prList.append("- {0} @{1} [(#{2})]({3}) {4}".format(getTitle(pr, titleSection), pr['author']['name'],
-                                                                    pr['number'], pr['url'], labels).replace('"', "'"))
+                prList.append("- {0} @{1} [(#{2})]({3}) {4}".format(getTitle(pr, titleSection), getUserName(pr), pr['number'], pr['url'], labels).replace('"', "'"))
                 prNumbers.add(pr['number'])
     return prList
 
+def getUserName(prData):
+    try:
+      return prData['author']['name']
+    except Exception as err:
+      return prData['author']['login']
 
 def getTitle(prData, titleSection):
     if len(titleSection.strip()) == 0:
-        print("TITLE IS EMPTY!!!!")
         return prData['title']
     else:
         return getPullRequestSection(prData, titleSection)
@@ -235,8 +242,6 @@ def getTitle(prData, titleSection):
 
 def getPullRequestSection(prData, titleSection):
     body = prData['body']
-    # if prData['number'] == 10400:
-    #     print("\n\nPR BODY === " + str(prData['number']) + " == " + body)
     titleData = ''
     foundGivenSection = False
     for line in body.split('\n'):
@@ -274,5 +279,6 @@ if __name__ == '__main__':
     repo = sys.argv[2]
     branch = sys.argv[3]
     timestamp = sys.argv[4]
+    titleSection = sys.argv[5]
 
-    getPullRequests(token, repo, branch, timestamp)
+    getPullRequests(token, repo, branch, timestamp, titleSection=titleSection)
