@@ -1,6 +1,5 @@
 import requests
 import sys
-from extract_changelogs import beautifyChangelogs
 
 prQuery = """
 query($owner: String!, $repoName: String!, $timestamp: GitTimestamp!, $ref: String!) {
@@ -13,15 +12,19 @@ query($owner: String!, $repoName: String!, $timestamp: GitTimestamp!, $ref: Stri
                   pageInfo {
                     hasNextPage
                     endCursor
-                  }  
+                  }
                   nodes {
                     associatedPullRequests(first: 5) {
                       nodes {
                         title
                         number
                         url
+                        body
                         author {
                           login
+                          ... on User {
+                            name
+                          }
                         }
                         labels(first: 10) {
                           nodes {
@@ -57,8 +60,12 @@ query($owner: String!, $repoName: String!, $timestamp: GitTimestamp!, $ref: Stri
                         title
                         number
                         url
+                        body
                         author {
                           login
+                          ... on User {
+                            name
+                          }
                         }
                         labels(first: 10) {
                           nodes {
@@ -94,8 +101,12 @@ query($owner: String!, $repoName: String!, $ref: String!) {
                         title
                         number
                         url
+                        body
                         author {
                           login
+                          ... on User {
+                            name
+                          }
                         }
                         labels(first: 10) {
                           nodes {
@@ -131,8 +142,12 @@ query($owner: String!, $repoName: String!, $ref: String!, $after: String!) {
                         title
                         number
                         url
+                        body
                         author {
                           login
+                          ... on User {
+                            name
+                          }
                         }
                         labels(first: 10) {
                           nodes {
@@ -152,8 +167,14 @@ query($owner: String!, $repoName: String!, $ref: String!, $after: String!) {
 
 BASE_URL = "https://api.github.com/graphql"
 prNumbers = set()
+titleObservableSection = ''
 
-def getPullRequests(token, repoName, branch, timestamp = None, paging = False, after = ""):
+
+def getPullRequests(token, repoName, branch, timestamp=None, paging=False, after="", titleSection=""):
+    global titleObservableSection
+    if len(titleObservableSection) == 0:
+        titleObservableSection = titleSection
+
     prList = list()
     repoInfo = repoName.split('/')
     inputVariables = {
@@ -162,50 +183,37 @@ def getPullRequests(token, repoName, branch, timestamp = None, paging = False, a
         "ref": branch
     }
 
-    if timestamp != None:
-      inputVariables["timestamp"] = timestamp
-      if not paging:
-        query = prQuery
-      else:
-        query = prQueryWithPagination
-        inputVariables["after"] = after
+    if timestamp is not None:
+        inputVariables["timestamp"] = timestamp
+        if not paging:
+            query = prQuery
+        else:
+            query = prQueryWithPagination
+            inputVariables["after"] = after
     else:
-      # for the first time releases
-      if not paging:
-        query = prQueryForFirstRelease
-      else:
-        query = prQueryWithPaginationForFirstRelease
-        inputVariables["after"] = after
+        # for the first time releases
+        if not paging:
+            query = prQueryForFirstRelease
+        else:
+            query = prQueryWithPaginationForFirstRelease
+            inputVariables["after"] = after
 
     try:
         headers = {"Authorization": "token " + token}
         versionRequest = requests.post(
-            BASE_URL, 
-            json = {'query': query, 'variables': inputVariables},
-            headers = headers)
+            BASE_URL,
+            json={'query': query, 'variables': inputVariables},
+            headers=headers)
 
         if versionRequest.status_code == 200:
             response = versionRequest.json()
-            prList += createList(response)
+            prList += createList(response, titleSection)
             prList += checkForNextPR(response, token, repoName, branch, timestamp)
             return prList
         else:
             raise Exception("Query failed " + versionRequest.status_code)
     except (requests.exceptions.RequestException, requests.exceptions.HTTPError) as err:
         raise Exception("Network Exception " + err.response.text)
-
-<<<<<<< Updated upstream
-def createList(response):
-  prList = list()
-  history = response['data']['repository']['ref']['target']['history']
-  for commit in history['nodes']:
-    for pr in commit['associatedPullRequests']['nodes']:
-      if (pr['number'] not in prNumbers):
-        labels = getLabels(pr['labels']['nodes'])
-        prList.append("- {0} @{1} [(#{2})]({3}) {4}".format(pr['title'], pr['author']['login'], pr['number'], pr['url'], labels).replace('"', "'"))
-        prNumbers.add(pr['number'])
-  return prList
-=======
 
 def createList(response, titleSection):
     prList = list()
@@ -248,15 +256,14 @@ def getPullRequestSection(prData, titleSection):
         titleData = prData['title']
     return titleData
 
->>>>>>> Stashed changes
-
 def checkForNextPR(response, token, repoName, branch, timestamp):
-  history = response['data']['repository']['ref']['target']['history']
-  if history['pageInfo']['hasNextPage'] == True:
-      nextCursor = history['pageInfo']['endCursor']
-      return getPullRequests(token, repoName, branch, timestamp, paging=True, after=nextCursor)
-  else:
-      return list()
+    history = response['data']['repository']['ref']['target']['history']
+    if history['pageInfo']['hasNextPage']:
+        nextCursor = history['pageInfo']['endCursor']
+        return getPullRequests(token, repoName, branch, timestamp, paging=True, after=nextCursor, titleSection=titleObservableSection)
+    else:
+        return list()
+
 
 def getLabels(labels):
     labelString = "|||"
@@ -264,10 +271,12 @@ def getLabels(labels):
         labelString += label['name'] + "|||"
     return labelString
 
+
 if __name__ == '__main__':
     token = sys.argv[1]
     repo = sys.argv[2]
     branch = sys.argv[3]
     timestamp = sys.argv[4]
-    
-    getPullRequests(token, repo, branch, timestamp)
+    titleSection = sys.argv[5]
+
+    getPullRequests(token, repo, branch, timestamp, titleSection=titleSection)
