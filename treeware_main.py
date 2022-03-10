@@ -24,5 +24,4 @@ if __name__ == '__main__':
         isBeta = False
     drafterPath = sys.argv[5]
     titleSection = sys.argv[6]
-
     init()
