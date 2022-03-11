@@ -69,6 +69,8 @@ def getRefinedChangelogs(changelogs):
         if len(section.strip()) == 0:
             continue
         heading = section.strip().split("\n", 1)
+        print("SECTION {0}".format(section))
+        print("HEADER {0}".format(heading))
         if len(heading[0]) != 0 and len(heading[1]) != 0:
             headingText = newSection(heading[0].strip().replace("*", ""), True)
             formattedText = listToBulletPoints(heading[1].strip())
