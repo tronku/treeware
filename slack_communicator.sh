@@ -4,7 +4,7 @@ webhookId=$3
 version_name=$4
 changelogs=$5
 
-payload=`python3 /get_slack_message.py $version_name "$changelogs"`
+payload=$(python3 /get_slack_message.py $version_name "$changelogs")
 echo $payload
 
 url=https://hooks.slack.com/services/$workspaceId/$channelId/$webhookId
