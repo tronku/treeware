@@ -59,6 +59,26 @@ inputs:
     description: 'Extra note to add in the GitHub release notes'
     default: ''
     required: false
+
+  slack_workspace_id:
+    description: 'Slack workspace ID for communication'
+    default: ''
+    required: false
+
+  slack_channel_id:
+    description: 'Slack channel ID for communication'
+    default: ''
+    required: false
+
+  slack_webhook_id:
+    description: 'Slack webhook ID for communication'
+    default: ''
+    required: false
+
+  title_observer_section:
+    description: 'Section that needs to be used for title in changelogs, by default it uses PR title'
+    default: ''
+    required: false
 ```
 
 ## List of outputs
