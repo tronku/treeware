@@ -1,4 +1,4 @@
-FROM alpine:3.12.1
+FROM alpine:3.16.0
 
 COPY entrypoint.sh /entrypoint.sh
 COPY treeware_main.py /treeware_main.py
