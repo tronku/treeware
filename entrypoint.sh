@@ -39,7 +39,6 @@ isSuccess=$(echo "$changelogs" | cut -d " " -f1)
 
 if [[ "$isSuccess" == "Error" ]] ; then
   echo "Something went wrong. Please check the logs - $changelogs"
-  exit 1
 else
   # in order to push that in the outputs, needs some string manipulations
   content="${changelogs//'%'/'%25'}"
