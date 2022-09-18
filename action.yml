@@ -81,6 +81,11 @@ inputs:
     default: ''
     required: false
 
+  bump_file_path:
+    description: 'Path of Bump YAML file'
+    default: ''
+    required: false
+
 outputs:
   changelogs:
     description: 'Categorized changelogs based on labels'
@@ -110,3 +115,4 @@ runs:
     - ${{ inputs.slack_channel_id }}
     - ${{ inputs.slack_webhook_id }}
     - ${{ inputs.title_observer_section }}
+    - ${{ inputs.bump_file_path }}

@@ -79,6 +79,11 @@ inputs:
     description: 'Section that needs to be used for title in changelogs, by default it uses PR title'
     default: ''
     required: false
+
+  bump_file_path:
+    description: 'Path of Bump YAML file'
+    default: ''
+    required: false
 ```
 
 ## List of outputs
@@ -111,6 +116,16 @@ categories:
   - title: '🧰 **Maintenance** '
     labels:
       - 'chore'
+```
+
+## Format of bump.yml
+You have to mention the Gradle identifier for the library and mention all the repos that needs to be bumped up.
+Here's the default drafter:
+```yaml
+lib_identifier: 'atomicLibVersion'
+repos:
+  - 'Zomato/Android'
+  - 'Zomato/chat-sdk-android'
 ```
 
 ## How to use treeware?

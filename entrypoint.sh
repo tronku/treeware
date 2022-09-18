@@ -17,6 +17,7 @@ slack_workspace_id=${12}
 slack_channel_id=${13}
 slack_webhook_id=${14}
 title_observer_section=${15}
+bump_file_path=${16}
 
 token=$GITHUB_TOKEN
 repo_name=$GITHUB_REPOSITORY
@@ -49,6 +50,11 @@ else
   if [ "$should_release" = true ] ; then
     # creates a release on GitHub with the version name as tag
     bash /release.sh "$token" "$version_name" "$changelogs" "$assets" "$target_commitish" "$is_prerelease" "$is_draft" "$extra_release_note" "$is_beta"
+    
+    # bumping other repos with new lib version
+    if [ ${#bump_file_path} != 0 ]; then
+      bash /bump_prs.sh "$bump_file_path" "$version_name" "$changelogs" "$token" "$base_branch"
+    fi
 
     # communicate the changelog to the specified slack webhook
     if [[ ${#slack_workspace_id} != 0 && ${#slack_channel_id} != 0 && ${#slack_webhook_id} != 0 ]]; then
