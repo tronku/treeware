@@ -7,6 +7,8 @@ COPY get_pull_requests.py /get_pull_requests.py
 COPY extract_changelogs.py /extract_changelogs.py
 COPY release.sh /release.sh
 COPY drafter.yml /drafter.yml
+COPY slack_communicator.sh /slack_communicator.sh
+COPY get_slack_message.py /get_slack_message.py
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 RUN apk add --no-cache \
