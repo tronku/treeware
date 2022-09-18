@@ -124,8 +124,8 @@ Here's the default drafter:
 ```yaml
 lib_identifier: 'atomicLibVersion'
 repos:
-  - 'Zomato/Android'
-  - 'Zomato/chat-sdk-android'
+  - 'username/repoName1'
+  - 'username/repoName2'
 ```
 
 ## How to use treeware?
