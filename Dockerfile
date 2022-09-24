@@ -12,6 +12,7 @@ COPY get_slack_message.py /get_slack_message.py
 COPY bump_prs.sh /bump_prs.sh
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+
 RUN apk add --no-cache \
     git \
     bash \
@@ -20,9 +21,10 @@ RUN apk add --no-cache \
     python3 \
     curl \
     jq \
-    py3-pip \
-    yq
+    py3-pip
 RUN pip3 install requests
 RUN pip3 install pyyaml
+
+RUN apk add yq --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
 
 ENTRYPOINT ["/entrypoint.sh"]
