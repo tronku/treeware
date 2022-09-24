@@ -12,6 +12,9 @@ function createBumpPR() {
   repo=$1
   link="https://${token}@github.com/${repo}.git"
 
+  git config user.name ${GITHUB_ACTOR}
+  git config user.email ${GITHUB_ACTOR}@gmail.com
+
   git clone $link
   bumpBranch="bump_${identifier}_${version}"
   git checkout -b $bumpBranch
@@ -43,7 +46,7 @@ function createBumpPR() {
   git push origin $bumpBranch
 
   pr_allow_empty="true"
-  bash /createpr.sh "$token" "$bumpBranch" "$base_branch" "$pr_allow_empty" "$title" "$changelogs"
+  bash /createpr.sh "$token" "$bumpBranch" "$base_branch" "$pr_allow_empty" "$title" "$changelogs" "$repo"
 
   cd ..
 }

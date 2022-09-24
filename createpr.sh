@@ -4,7 +4,8 @@ INPUT_DESTINATION_BRANCH=$3
 INPUT_PR_ALLOW_EMPTY=$4
 INPUT_PR_TITLE=$5
 INPUT_PR_BODY=$6
-echo "params: $GITHUB_TOKEN $INPUT_SOURCE_BRANCH $INPUT_DESTINATION_BRANCH $INPUT_PR_ALLOW_EMPTY $INPUT_PR_TITLE $INPUT_PR_BODY"
+REPO=$7
+echo "params: $GITHUB_TOKEN $INPUT_SOURCE_BRANCH $INPUT_DESTINATION_BRANCH $INPUT_PR_ALLOW_EMPTY $INPUT_PR_TITLE $INPUT_PR_BODY $REPO"
 
 set -e
 
@@ -32,11 +33,11 @@ echo "Destination branch $DESTINATION_BRANCH"
 git config user.name ${GITHUB_ACTOR}
 git config user.email ${GITHUB_ACTOR}@gmail.com
 
-echo "repo link $GITHUB_REPOSITORY"
+echo "repo link $REPO"
 echo "actor $GITHUB_ACTOR"
 echo "token $GITHUB_TOKEN"
 
-git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
+git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$REPO"
 
 echo "listing all remotes"
 git remote -v
