@@ -4,9 +4,9 @@ changelogs=$3
 token=$4
 base_branch=$5
 
-repoString=$(yq eval '.repos' sample_bump_file.yml | tr -d '-' | tr -d "'" | tr -d ' ')
+repoString=$(yq eval '.repos' $bump_file_path | tr -d '-' | tr -d "'" | tr -d ' ')
 repoArr=($(echo "$repoString" | tr ' ' '\n'))
-identifier=$(yq eval '.lib_identifier' sample_bump_file.yml)
+identifier=$(yq eval '.lib_identifier' $bump_file_path)
 
 function createBumpPR() {
   repo=$1
@@ -39,7 +39,7 @@ function createBumpPR() {
   done
 
   title="Bump ${identifier} to ${version}"
-  git commit -m $title
+  git commit -m "${title}"
   git push origin $bumpBranch
 
   pr_allow_empty="true"

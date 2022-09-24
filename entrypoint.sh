@@ -53,7 +53,7 @@ else
     
     # bumping other repos with new lib version
     if [ ${#bump_file_path} != 0 ]; then
-      bash /bump_prs.sh "$bump_file_path" "$version_name" "$changelogs" "$token" "$base_branch"
+      bash /bump_prs.sh "$bump_file_path" "$version_name" "$changelogs" "$token" "$prod_branch"
     fi
 
     # communicate the changelog to the specified slack webhook
