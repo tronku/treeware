@@ -10,7 +10,6 @@ COPY drafter.yml /drafter.yml
 COPY slack_communicator.sh /slack_communicator.sh
 COPY get_slack_message.py /get_slack_message.py
 COPY bump_prs.sh /bump_prs.sh
-COPY createpr.sh /createpr.sh
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 

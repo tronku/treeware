@@ -124,8 +124,8 @@ Here's the default drafter:
 ```yaml
 lib_identifier: 'atomicLibVersion'
 repos:
-  - 'username/repoName1'
-  - 'username/repoName2'
+  - 'username/repoName1 => branch'
+  - 'username/repoName2 => branch'
 ```
 
 ## How to use treeware?
