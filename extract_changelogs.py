@@ -1,4 +1,5 @@
 import yaml
+import re
 
 whatsNewKey = '🌟 **Whats new** '
 
@@ -33,9 +34,9 @@ def categorization(prList, labelMap):
                     noOfMatchedLabels = noOfMatchedLabels + 1
             if (i == len(prData) - 1):
                 if (noOfMatchedLabels == 1):
-                    addToDict(newPrDict, labelMap[prData[matchedLabelIndex]], prData[0])
+                    addToDict(newPrDict, labelMap[prData[matchedLabelIndex]], cleanedUpString(prData[0]))
                 else:
-                    addToDict(newPrDict, whatsNewKey, prData[0])
+                    addToDict(newPrDict, whatsNewKey, cleanedUpString(prData[0]))
 
     return newPrDict
 
@@ -54,3 +55,7 @@ def mergeCategories(refinedPRs):
         if (key != whatsNewKey):
             changelogs += "## " + key + "\n" + refinedPRs[key] + "\n\n"
     return changelogs
+
+def cleanedUpString(data):
+    updatedData = re.sub('''[\'\"^\`{-~]''', '', data)
+    return updatedData
