@@ -42,7 +42,7 @@ def categorization(prList, labelMap):
 
 def addToDict(dict, key, appendValue):
     if key in dict:
-        dict.update({key: dict[key] + "\n" + appendValue})
+        dict.update({key: "{0}\n{1}".format(dict[key], appendValue)})
     else:
         dict[key] = appendValue
 
@@ -50,10 +50,10 @@ def addToDict(dict, key, appendValue):
 def mergeCategories(refinedPRs):
     changelogs = ""
     if (whatsNewKey in refinedPRs):
-        changelogs += '## ' + whatsNewKey + "\n" + refinedPRs[whatsNewKey] + "\n\n"
+        changelogs += '## {0}\n{1}\n\n'.format(whatsNewKey, refinedPRs[whatsNewKey])
     for key in refinedPRs:
         if (key != whatsNewKey):
-            changelogs += "## " + key + "\n" + refinedPRs[key] + "\n\n"
+            changelogs += "## {0}\n{1}\n\n".format(key, refinedPRs[key])
     return changelogs
 
 def cleanedUpString(data):
