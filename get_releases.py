@@ -36,9 +36,9 @@ def getLastRelease(token, repoName, isBeta = False):
         if versionRequest.status_code == 200:
             return parseResponse(versionRequest.json(), isBeta)
         else:
-            raise Exception("Query failed " + versionRequest.status_code)
+            raise Exception("Query failed {0}".format(versionRequest.status_code))
     except (requests.exceptions.RequestException, requests.exceptions.HTTPError) as err:
-        raise Exception("Network Exception " + err.response.text)
+        raise Exception("Network Exception {0}".format(err.response.text))
 
 
 def parseResponse(response, isBeta):
