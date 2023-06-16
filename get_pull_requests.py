@@ -7,7 +7,7 @@ query($owner: String!, $repoName: String!, $timestamp: GitTimestamp!, $ref: Stri
         ref(qualifiedName: $ref) {
             target {
               ... on Commit {
-                history(first: 100, since: $timestamp) {
+                history(first: 50, since: $timestamp) {
                   totalCount
                   pageInfo {
                     hasNextPage
@@ -48,7 +48,7 @@ query($owner: String!, $repoName: String!, $timestamp: GitTimestamp!, $ref: Stri
         ref(qualifiedName: $ref) {
             target {
               ... on Commit {
-                history(first: 100, since: $timestamp, after: $after) {
+                history(first: 50, since: $timestamp, after: $after) {
                   totalCount
                   pageInfo {
                     hasNextPage
@@ -89,7 +89,7 @@ query($owner: String!, $repoName: String!, $ref: String!) {
         ref(qualifiedName: $ref) {
             target {
               ... on Commit {
-                history(first: 100) {
+                history(first: 50) {
                   totalCount
                   pageInfo {
                     hasNextPage
@@ -130,7 +130,7 @@ query($owner: String!, $repoName: String!, $ref: String!, $after: String!) {
         ref(qualifiedName: $ref) {
             target {
               ... on Commit {
-                history(first: 100, after: $after) {
+                history(first: 50, after: $after) {
                   totalCount
                   pageInfo {
                     hasNextPage
@@ -211,9 +211,9 @@ def getPullRequests(token, repoName, branch, timestamp=None, paging=False, after
             prList += checkForNextPR(response, token, repoName, branch, timestamp)
             return prList
         else:
-            raise Exception("Query failed " + versionRequest.status_code)
+            raise Exception("Query failed {0}".format(versionRequest.status_code))
     except (requests.exceptions.RequestException, requests.exceptions.HTTPError) as err:
-        raise Exception("Network Exception " + err.response.text)
+        raise Exception("Network Exception {0}".format(err.response.text))
 
 def createList(response, titleSection):
     prList = list()
