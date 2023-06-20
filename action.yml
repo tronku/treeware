@@ -81,6 +81,11 @@ inputs:
     default: ''
     required: false
 
+  ignore_changelogs:
+    description: 'To ignore changelogs and only release on Github'
+    default: 'false'
+    required: false
+
 outputs:
   changelogs:
     description: 'Categorized changelogs based on labels'
@@ -110,3 +115,4 @@ runs:
     - ${{ inputs.slack_channel_id }}
     - ${{ inputs.slack_webhook_id }}
     - ${{ inputs.title_observer_section }}
+    - ${{ inputs.ignore_changelogs }}

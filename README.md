@@ -79,6 +79,11 @@ inputs:
     description: 'Section that needs to be used for title in changelogs, by default it uses PR title'
     default: ''
     required: false
+
+  ignore_changelogs:
+    description: 'To ignore changelogs and only release on Github'
+    default: 'false'
+    required: false
 ```
 
 ## List of outputs
