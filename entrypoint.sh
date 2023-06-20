@@ -17,6 +17,7 @@ slack_workspace_id=${12}
 slack_channel_id=${13}
 slack_webhook_id=${14}
 title_observer_section=${15}
+ignore_changelogs=${16}
 
 token=$GITHUB_TOKEN
 repo_name=$GITHUB_REPOSITORY
