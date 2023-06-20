@@ -84,6 +84,11 @@ inputs:
     description: 'Path of Bump YAML file'
     default: ''
     required: false
+
+  ignore_changelogs:
+    description: 'To ignore changelogs and only release on Github'
+    default: 'false'
+    required: false
 ```
 
 ## List of outputs
