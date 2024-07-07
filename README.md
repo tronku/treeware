@@ -2,6 +2,9 @@
 
 Generates a categorized changelog and releases your prod or beta with assets. It uses a drafter file to categorize data into labels.
 
+## Sample changelog
+<img src="https://github.com/tronku/treeware/blob/master/Changelogs.png" width="600" title="Sample changelog">
+
 ## List of params
 ```yaml
 inputs:
